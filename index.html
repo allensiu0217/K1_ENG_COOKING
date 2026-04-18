@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>K1 廚房煮食遊戲</title>
+    <title>K1 Kitchen Spelling Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -11,7 +11,7 @@
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
-            background-color: #fff1f2; /* 溫馨的淡粉紅色背景 */
+            background-color: #fff1f2;
             background-image: radial-gradient(#fecdd3 2px, transparent 2px);
             background-size: 30px 30px;
             overflow: hidden;
@@ -32,7 +32,6 @@
             cursor: not-allowed;
         }
 
-        /* 答錯搖晃 */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             20%, 60% { transform: translateX(-10px) rotate(-5deg); }
@@ -40,7 +39,6 @@
         }
         .animate-shake { animation: shake 0.5s ease-in-out; }
 
-        /* 字母飛入鍋中特效 */
         @keyframes dropIntoPot {
             0% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
             50% { transform: scale(1.5) translateY(-50px) rotate(15deg); opacity: 1; }
@@ -48,14 +46,12 @@
         }
         .animate-drop { animation: dropIntoPot 0.8s ease-in forwards; pointer-events: none; z-index: 50; position: absolute; }
 
-        /* 湯鍋沸騰動畫 */
         @keyframes boiling {
             0%, 100% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-5px) scale(1.02); }
         }
         .animate-boil { animation: boiling 2s infinite ease-in-out; }
 
-        /* 食物完成彈出 */
         @keyframes pop {
             0% { transform: scale(0.5); opacity: 0; }
             70% { transform: scale(1.2); opacity: 1; }
@@ -63,7 +59,6 @@
         }
         .animate-pop { animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
-        /* 星星浮動 */
         @keyframes floatUp {
             0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 1; }
             100% { transform: translateY(-150px) scale(1.5) rotate(90deg); opacity: 0; }
@@ -76,7 +71,6 @@
             z-index: 60;
         }
 
-        /* 單字底線填空樣式 */
         .word-slot {
             display: inline-block;
             min-width: 2rem;
@@ -85,49 +79,49 @@
             text-align: center;
             height: 3.5rem;
             line-height: 3.5rem;
-            color: #e5e7eb; /* 預設淺灰色字體作為提示 */
+            color: #e5e7eb; 
         }
         .word-slot.filled {
-            border-bottom: 4px solid transparent; /* 填滿後隱藏底線 */
-            color: #d97706; /* 亮橘色 */
+            border-bottom: 4px solid transparent; 
+            color: #d97706; 
         }
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col items-center justify-center relative">
 
-    <!-- 主選單畫面 -->
+    <!-- Menu Screen -->
     <div id="menu-screen" class="w-full h-full flex flex-col items-center justify-center p-4 z-20 absolute inset-0 bg-[#fff1f2]">
         <div class="text-[6rem] md:text-[8rem] drop-shadow-lg mb-2 animate-boil">👩‍🍳🍲</div>
         <h1 class="text-4xl md:text-6xl font-black text-rose-500 mb-8 text-center drop-shadow-md">
-            小小廚神拼字鍋
+            Little Chef's Spelling Pot
         </h1>
         
-        <div class="bg-white p-6 rounded-3xl w-full max-w-xl border-4 border-rose-300 shadow-sm mb-8 text-center">
-            <h2 class="text-2xl text-gray-700 font-bold mb-4">今日菜單任務：</h2>
+        <div class="bg-white p-6 rounded-3xl w-full max-w-2xl border-4 border-rose-300 shadow-sm mb-8 text-center">
+            <h2 class="text-2xl text-gray-700 font-bold mb-4">Today's Menu Mission:</h2>
             <ul class="text-lg text-gray-600 font-bold space-y-2 text-left w-fit mx-auto">
-                <li>🔪 找出食物的英文字母丟進鍋子！</li>
-                <li>🔪 <span class="text-red-500">第一個字母是大寫，後面是小寫</span> 哦！</li>
-                <li>🔪 煮滿 3 個食材就能完成一道大餐！</li>
+                <li>🔪 Find the letters and drop them in the pot!</li>
+                <li>🔪 <span class="text-red-500">First letter is UPPERCASE, others are lowercase!</span></li>
+                <li>🔪 Cook 3 foods to make a yummy meal!</li>
             </ul>
         </div>
 
         <button onclick="startGame()" class="btn-3d bg-rose-400 text-white text-4xl font-black py-6 px-16 rounded-[2rem] border-4 border-rose-500 hover:bg-rose-300">
-            開始料理！
+            Let's Cook!
         </button>
     </div>
 
-    <!-- 遊戲畫面 -->
+    <!-- Game Screen -->
     <div id="game-screen" class="w-full h-full hidden flex-col relative max-w-3xl mx-auto">
         
-        <!-- 頂部資訊區 -->
+        <!-- Top Info Bar -->
         <div class="w-full bg-white border-b-4 border-rose-200 p-2 md:p-4 z-10 shadow-sm flex justify-between items-center">
             <button onclick="showMenu()" class="btn-3d bg-gray-400 text-white text-sm md:text-lg font-bold py-2 px-4 rounded-xl border-b-4 border-gray-500 hover:bg-gray-300">
-                🏠 返回
+                🏠 Home
             </button>
             <div id="stage-display" class="text-lg md:text-xl font-black text-rose-500 bg-rose-100 px-4 py-2 rounded-full border-2 border-rose-300">
-                關卡 1/3
+                Stage 1/3
             </div>
-            <!-- 收集進度 (3個鍋子) -->
+            <!-- Progress (3 Pots) -->
             <div id="food-progress" class="flex gap-2 text-2xl md:text-3xl bg-gray-100 py-1 px-3 rounded-full border-2 border-gray-200">
                 <span id="prog-1" class="grayscale opacity-50 transition-all duration-500">🍲</span>
                 <span id="prog-2" class="grayscale opacity-50 transition-all duration-500">🍲</span>
@@ -135,61 +129,61 @@
             </div>
         </div>
 
-        <!-- 遊戲主視覺區 -->
+        <!-- Main Game Area -->
         <div class="flex-1 flex flex-col items-center justify-start pt-4 relative">
             
-            <!-- 目標食物提示 -->
+            <!-- Target Food Prompt -->
             <div class="bg-yellow-50 border-4 border-yellow-300 rounded-3xl p-4 md:p-6 mb-4 flex flex-col items-center shadow-md w-11/12 max-w-lg">
                 <div id="target-emoji" class="text-[5rem] md:text-[6rem] drop-shadow-md mb-2">🍎</div>
                 
-                <!-- 單字拼寫區 -->
+                <!-- Word Display -->
                 <div id="word-display" class="text-4xl md:text-5xl font-black flex justify-center flex-wrap tracking-widest">
-                    <!-- JS 動態生成底線 -->
+                    <!-- JS Dynamic Generation -->
                 </div>
             </div>
 
-            <!-- 煮食鍋區 -->
+            <!-- Cooking Pot Area -->
             <div class="relative w-full flex justify-center mb-6 mt-auto">
                 <div id="pot" class="text-[8rem] md:text-[10rem] drop-shadow-2xl animate-boil z-10 relative">
                     🍲
-                    <!-- 丟入鍋中的食物圖案預覽 (隱藏) -->
+                    <!-- Hidden food preview in the pot -->
                     <div id="food-in-pot" class="absolute inset-0 flex items-center justify-center text-[4rem] opacity-0 transition-opacity duration-500 z-20 mb-8"></div>
                 </div>
             </div>
 
-            <!-- 字母選擇區 -->
+            <!-- Letter Options Area -->
             <div id="options-container" class="w-full bg-white border-t-4 border-rose-200 p-4 pb-8 flex flex-wrap justify-center gap-2 md:gap-4 z-20 rounded-t-3xl shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
-                <!-- 由 JS 動態生成 -->
+                <!-- JS Dynamic Generation -->
             </div>
         </div>
 
-        <!-- 慶祝特效容器 -->
+        <!-- Celebration Effects Container -->
         <div id="celebration-container" class="fixed inset-0 pointer-events-none flex items-center justify-center z-50"></div>
 
-        <!-- 通關特快畫面 -->
+        <!-- Level Up Screen -->
         <div id="level-up-screen" class="fixed inset-0 bg-rose-500 bg-opacity-95 z-50 hidden flex-col items-center justify-center transition-opacity duration-500">
             <div class="bg-white p-8 md:p-12 rounded-[3rem] border-8 border-yellow-400 shadow-2xl flex flex-col items-center transform scale-0 transition-transform duration-500" id="level-up-box">
                 <h2 id="level-up-title" class="text-4xl md:text-6xl font-black text-rose-500 mb-2 text-center drop-shadow-md animate-bounce">
-                    菜色完成！
+                    Dish Complete!
                 </h2>
                 
-                <!-- 菜色展示區 -->
+                <!-- Dish Display -->
                 <div id="dish-display" class="text-[8rem] md:text-[10rem] drop-shadow-xl my-4 animate-pop">🍛</div>
                 
-                <p id="level-up-msg" class="text-3xl font-bold text-gray-600 text-center mb-8">完成一道美味的料理！</p>
+                <p id="level-up-msg" class="text-3xl font-bold text-gray-600 text-center mb-8">You made a delicious meal!</p>
                 
                 <button id="next-stage-btn" class="hidden btn-3d bg-orange-400 text-white text-3xl font-black py-4 px-10 rounded-3xl border-4 border-orange-500 hover:bg-orange-300">
-                    下一道菜
+                    Next Dish
                 </button>
                 <button id="finish-btn" onclick="showMenu()" class="hidden btn-3d bg-green-400 text-white text-3xl font-black py-4 px-10 rounded-3xl border-4 border-green-500 hover:bg-green-300">
-                    重新開始
+                    Play Again
                 </button>
             </div>
         </div>
     </div>
 
     <script>
-        // 食物資料庫 (首字母大寫，其餘小寫)
+        // Food Database
         const foodsData = [
             { word: 'Apple', emoji: '🍎' },
             { word: 'Bread', emoji: '🍞' },
@@ -207,28 +201,28 @@
             { word: 'Steak', emoji: '🥩' }
         ];
 
-        // 關卡獎勵菜色
+        // Stage Rewards
         const stageDishes = [
-            { emoji: '🍛', name: '咖哩飯', msg: '香噴噴的咖哩飯！' }, // Stage 1 (飯)
-            { emoji: '🍝', name: '義大利麵', msg: '美味的義大利麵！' }, // Stage 2 (麵)
-            { emoji: '🍰', name: '大蛋糕', msg: '甜甜的大蛋糕！' }     // Stage 3 (甜點)
+            { emoji: '🍛', name: 'Curry Rice', msg: 'Yummy Curry Rice!' }, 
+            { emoji: '🍝', name: 'Spaghetti', msg: 'Delicious Spaghetti!' }, 
+            { emoji: '🍰', name: 'Big Cake', msg: 'Sweet Big Cake!' }     
         ];
         
-        // 遊戲核心狀態
+        // Game State
         let currentStage = 1;
         const MAX_STAGE = 3;
-        const FOODS_PER_STAGE = 3; // 每關煮 3 個食物
+        const FOODS_PER_STAGE = 3;
         
-        let targetFoodsForStage = []; // 本關要煮的 3 個食物
-        let currentFoodIndex = 0;     // 目前正在煮第幾個食物 (0, 1, 2)
+        let targetFoodsForStage = []; 
+        let currentFoodIndex = 0;     
         
-        let targetWord = "";          // 當前食物的單字 (如 'Apple')
-        let currentSpelled = "";      // 目前已拼出的字母 (如 'Ap')
+        let targetWord = "";          
+        let currentSpelled = "";      
         
         let isProcessing = false;
         let bestEnglishVoice = null;
 
-        // DOM 元素
+        // DOM Elements
         const menuScreen = document.getElementById('menu-screen');
         const gameScreen = document.getElementById('game-screen');
         const stageDisplay = document.getElementById('stage-display');
@@ -249,7 +243,7 @@
 
         const buttonColors = ['bg-pink-400 border-pink-500', 'bg-blue-400 border-blue-500', 'bg-green-400 border-green-500', 'bg-orange-400 border-orange-500', 'bg-purple-400 border-purple-500', 'bg-teal-400 border-teal-500'];
 
-        // 語音初始化
+        // Voice Init
         function loadVoices() {
             const voices = window.speechSynthesis.getVoices();
             if (voices.length === 0) return;
@@ -263,16 +257,14 @@
         window.speechSynthesis.onvoiceschanged = loadVoices;
         loadVoices();
 
-        // 返回首頁
         function showMenu() {
             gameScreen.classList.add('hidden');
             menuScreen.classList.remove('hidden');
             levelUpScreen.classList.add('hidden');
         }
 
-        // 開始遊戲
         function startGame() {
-            window.speechSynthesis.speak(new SpeechSynthesisUtterance('')); // 解鎖語音
+            window.speechSynthesis.speak(new SpeechSynthesisUtterance('')); 
             currentStage = 1;
             
             menuScreen.classList.add('hidden');
@@ -282,17 +274,14 @@
             startStage();
         }
 
-        // 開始新的一關
         function startStage() {
             isProcessing = false;
             currentFoodIndex = 0;
             
-            // 隨機挑選本關需要的 3 個食物
             let shuffled = [...foodsData].sort(() => 0.5 - Math.random());
             targetFoodsForStage = shuffled.slice(0, FOODS_PER_STAGE);
             
-            // 重置進度條 UI
-            stageDisplay.textContent = `關卡 ${currentStage}/${MAX_STAGE}`;
+            stageDisplay.textContent = `Stage ${currentStage}/${MAX_STAGE}`;
             for(let i=1; i<=3; i++) {
                 let el = document.getElementById(`prog-${i}`);
                 el.classList.add('grayscale', 'opacity-50');
@@ -306,40 +295,33 @@
             loadFood();
         }
 
-        // 載入一個新的食物來拼寫
         function loadFood() {
             currentSpelled = "";
             let foodData = targetFoodsForStage[currentFoodIndex];
             targetWord = foodData.word;
             
-            // 更新畫面上方圖像
             targetEmojiEl.textContent = foodData.emoji;
             targetEmojiEl.classList.remove('animate-pop');
             void targetEmojiEl.offsetWidth;
             targetEmojiEl.classList.add('animate-pop');
 
-            // 語音提示
             setTimeout(() => speakText(`Let's cook ${targetWord}`), 300);
             
             updateWordDisplay();
             generateLetterOptions();
         }
 
-        // 更新單字底線顯示 (改為具有灰字提示的配對模式)
         function updateWordDisplay() {
             wordDisplay.innerHTML = '';
             for (let i = 0; i < targetWord.length; i++) {
                 const slot = document.createElement('span');
                 if (i < currentSpelled.length) {
-                    // 已拼出的字母 (亮色)
                     slot.className = 'word-slot filled animate-pop text-orange-600';
                     slot.textContent = currentSpelled[i];
                 } else if (i === currentSpelled.length) {
-                    // 當前正在尋找的字母 (稍微閃爍，淺灰色)
                     slot.className = 'word-slot text-gray-400 animate-pulse font-bold';
                     slot.textContent = targetWord[i]; 
                 } else {
-                    // 尚未拼出的底線 (視覺提示，極淺灰)
                     slot.className = 'word-slot text-gray-200';
                     slot.textContent = targetWord[i]; 
                 }
@@ -347,24 +329,19 @@
             }
         }
 
-        // 生成下方字母選項
         function generateLetterOptions() {
             optionsContainer.innerHTML = '';
             
-            // 判斷目前需要什麼字母
             const nextLetterNeeded = targetWord[currentSpelled.length];
-            const isUpperNeed = (currentSpelled.length === 0); // 第一個字需要大寫
+            const isUpperNeed = (currentSpelled.length === 0); 
             
-            // 難度判斷 (Stage 1,2: 6個選項; Stage 3: 8個選項)
             const optionCount = currentStage === 3 ? 8 : 6;
             
-            // 準備選項池，確保包含正確答案
             let optionsPool = [nextLetterNeeded];
             
-            // 準備所有字母以抽取干擾項
             const allUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const allLower = "abcdefghijklmnopqrstuvwxyz";
-            const sourceStr = isUpperNeed ? allUpper : allLower; // 確保干擾項大小寫與需求一致
+            const sourceStr = isUpperNeed ? allUpper : allLower; 
             
             let attempts = 0;
             while(optionsPool.length < optionCount && attempts < 100) {
@@ -375,17 +352,14 @@
                 attempts++;
             }
             
-            // 打亂選項
             optionsPool.sort(() => 0.5 - Math.random());
             
-            // 渲染按鈕
             let availableColors = [...buttonColors, 'bg-indigo-400 border-indigo-500', 'bg-emerald-400 border-emerald-500'].sort(() => 0.5 - Math.random());
             
             optionsPool.forEach((letter, index) => {
                 const colorClass = availableColors[index % availableColors.length];
                 const btn = document.createElement('button');
                 
-                // 動態寬度
                 const widthClass = optionCount === 8 ? 'w-[22%] md:w-[18%]' : 'w-[28%] md:w-[22%]';
                 
                 btn.className = `btn-3d ${colorClass} text-white text-5xl md:text-6xl font-black py-4 md:py-6 rounded-2xl border-b-[6px] flex items-center justify-center ${widthClass}`;
@@ -396,23 +370,19 @@
             });
         }
 
-        // 處理字母點擊
         function handleLetterClick(letter, btnElement, event) {
             if (isProcessing) return;
             
             const nextLetterNeeded = targetWord[currentSpelled.length];
             
             if (letter === nextLetterNeeded) {
-                // 答對了
                 isProcessing = true;
                 playPlopSound();
-                speakText(letter); // 讀出該字母
+                speakText(letter); 
                 
-                // 視覺特效：產生一個複製的字母飛入鍋中
                 const flyLetter = document.createElement('div');
                 flyLetter.textContent = letter;
                 flyLetter.className = btnElement.className + " animate-drop";
-                // 設置起始位置在點擊的按鈕上
                 const rect = btnElement.getBoundingClientRect();
                 flyLetter.style.left = `${rect.left}px`;
                 flyLetter.style.top = `${rect.top}px`;
@@ -420,28 +390,22 @@
                 flyLetter.style.height = `${rect.height}px`;
                 document.body.appendChild(flyLetter);
                 
-                // 鎖死該按鈕
                 btnElement.disabled = true;
-
-                // 更新拼字進度
                 currentSpelled += letter;
                 
                 setTimeout(() => {
-                    flyLetter.remove(); // 移除動畫元素
+                    flyLetter.remove(); 
                     updateWordDisplay();
                     
-                    // 檢查單字是否拼完
                     if (currentSpelled.length === targetWord.length) {
                         handleFoodComplete();
                     } else {
-                        // 尚未拼完，刷新選項
                         isProcessing = false;
                         generateLetterOptions();
                     }
                 }, 800);
 
             } else {
-                // 答錯了
                 playBoingSound();
                 btnElement.classList.remove('animate-shake');
                 void btnElement.offsetWidth;
@@ -449,19 +413,16 @@
             }
         }
 
-        // 完成一個食物的收集
         function handleFoodComplete() {
             playCheerSound();
             speakText(`Got it! ${targetWord}`);
             
-            // 食物掉入鍋中的動畫
             foodInPot.textContent = targetFoodsForStage[currentFoodIndex].emoji;
             foodInPot.classList.remove('opacity-0', 'animate-pop');
-            foodInPot.classList.add('animate-drop'); // 借用飛入特效，但因為位置在鍋子內，看起來像融化進去
+            foodInPot.classList.add('animate-drop'); 
             
             showStars(pot);
 
-            // 更新頂部進度 (打亮小鍋子並改成該食物圖案)
             const progIcon = document.getElementById(`prog-${currentFoodIndex + 1}`);
             progIcon.classList.remove('grayscale', 'opacity-50');
             progIcon.textContent = targetFoodsForStage[currentFoodIndex].emoji;
@@ -472,7 +433,6 @@
                 foodInPot.classList.remove('animate-drop');
                 currentFoodIndex++;
                 
-                // 檢查關卡是否完成
                 if (currentFoodIndex >= FOODS_PER_STAGE) {
                     handleStageComplete();
                 } else {
@@ -482,18 +442,15 @@
             }, 1500);
         }
 
-        // 關卡完成 (製成菜式)
         function handleStageComplete() {
             playLevelUpSound();
             
             levelUpScreen.classList.remove('hidden');
             levelUpScreen.classList.add('flex');
             
-            // 重置按鈕狀態
             nextStageBtn.classList.add('hidden');
             finishBtn.classList.add('hidden');
             
-            // 取出本關獎勵菜色
             const dish = stageDishes[currentStage - 1];
             dishDisplay.textContent = dish.emoji;
             levelUpMsg.textContent = dish.msg;
@@ -503,26 +460,21 @@
                 levelUpBox.classList.add('scale-100');
             }, 100);
 
-            // 判斷是否全破
             if (currentStage >= MAX_STAGE) {
-                // 全破：開餐慶祝畫面
-                levelUpTitle.textContent = "開餐大會！";
+                levelUpTitle.textContent = "Dinner Time!";
                 levelUpTitle.className = "text-5xl md:text-7xl font-black text-rose-500 mb-2 text-center drop-shadow-md animate-bounce";
-                dishDisplay.innerHTML = `🍽️<br><span class="text-5xl">🍛🍝🍰</span>`; // 滿漢全席
-                levelUpMsg.textContent = "所有料理都完成了，大家來開餐吧！";
+                dishDisplay.innerHTML = `🍽️<br><span class="text-5xl">🍛🍝🍰</span>`; 
+                levelUpMsg.textContent = "All dishes are ready! Let's eat!";
                 
                 finishBtn.classList.remove('hidden');
                 
-                // 語音
                 setTimeout(() => speakText("Dinner is ready! You are a master chef!"), 500);
             } else {
-                // 單關過關
-                levelUpTitle.textContent = `第 ${currentStage} 道菜完成！`;
+                levelUpTitle.textContent = `Dish ${currentStage} Complete!`;
                 levelUpTitle.className = "text-5xl md:text-7xl font-black text-orange-500 mb-2 text-center drop-shadow-md animate-bounce";
                 
                 nextStageBtn.classList.remove('hidden');
                 
-                // 綁定下一關按鈕事件
                 nextStageBtn.onclick = () => {
                     currentStage++;
                     startStage();
@@ -532,7 +484,6 @@
             }
         }
 
-        // 發音邏輯
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -545,11 +496,10 @@
             }
         }
 
-        // 星星特效
         function showStars(element) {
             const rect = element.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2 - 50; // 稍微偏上
+            const centerY = rect.top + rect.height / 2 - 50; 
             
             for (let i = 0; i < 8; i++) {
                 const star = document.createElement('div');
@@ -566,9 +516,7 @@
             }
         }
 
-        // 音效區 (Web Audio API)
         function playPlopSound() {
-            // 字母丟進去或點擊正確的音效 (短促)
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ctx.createOscillator();
@@ -586,7 +534,6 @@
         }
 
         function playCheerSound() {
-            // 單字拼完的歡呼
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ctx.createOscillator();
@@ -604,7 +551,6 @@
         }
 
         function playBoingSound() {
-            // 答錯音效
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ctx.createOscillator();
@@ -622,10 +568,9 @@
         }
 
         function playLevelUpSound() {
-            // 完成一道菜的音效
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const notes = [329.63, 392.00, 523.25, 659.25]; // E G C E 和弦
+                const notes = [329.63, 392.00, 523.25, 659.25]; 
                 notes.forEach((freq, i) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
